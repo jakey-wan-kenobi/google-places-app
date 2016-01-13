@@ -103,18 +103,54 @@ var favorites = JSON.parse(localStorage['favorites']);
 
 // Save place to favorites 
 function savePlace() {
-    favorites.push(currentPlaceId);
-    console.log(favorites);
-    // Can't store arrays to localStorage, so stringify and then parse upon retrieval 
-    localStorage['favorites'] = JSON.stringify(favorites);
     
-    console.log(localStorage);
+    // if the item is already in favorites, remove it, else add it
+    
+    var isFavorited = false;
+    var index;
+    
+    for (var i = 0; i < favorites.length; i++ ) {
+        if (favorites[i] == currentPlaceId) {
+            isFavorited = true;
+            index = i;
+        } else {
+        }
+        
+    }
+    
+    if ( isFavorited == true ) {
+        console.log('removing');
+        favorites.splice(index, 1);
+        localStorage['favorites'] = JSON.stringify(favorites);
+        
+        showSaveButton();
+        
+    } else {
+        console.log('adding');
+        favorites.push(currentPlaceId);
+        console.log(favorites);
+        // Can't store arrays to localStorage, so stringify and then parse upon retrieval 
+        localStorage['favorites'] = JSON.stringify(favorites);
+    
+        console.log(localStorage);
+        
+        showRemoveButton();
+    }
+    
+
+}
+
+
+// Remove place from favorites
+function removePlace() {
+    favorites.indexOf(currentPlaceId);
+    console.log(index);
 }
 
 
 // When changes are made to favorites array, push them to the DOM
 function showFavorites() {
-    
+        
     // Clear current markers 
     console.log(markers);
     for (var i = 0; i < markers.length; i++) {
@@ -122,25 +158,34 @@ function showFavorites() {
     }
     markers = [];
     
-    var favs = JSON.parse(localStorage['favorites']);
-    console.log(favs);
-    
-    service = new google.maps.places.PlacesService(map);
-    
-    // For each favorite in our array, use the placeId to put the marker back on the map
-    for ( var i = 0; i < favs.length; i++) {
+    if ( favorites.length == 0  ) {
+        console.log('no favorites to show');
+    } else {
         
-        var request = {
-            placeId: favs[i]
+
+        var favs = JSON.parse(localStorage['favorites']);
+        console.log(favs);
+
+        service = new google.maps.places.PlacesService(map);
+
+        // For each favorite in our array, use the placeId to put the marker back on the map
+        for ( var i = 0; i < favs.length; i++) {
+
+            var request = {
+                placeId: favs[i]
+            }
+
+            service.getDetails(request, callback);
+
+            function callback(place, status) {
+                createMarker(place);
+            } 
+
         }
         
-        service.getDetails(request, callback);
-        
-        function callback(place, status) {
-            createMarker(place);
-        } 
-        
     }
+    
+        
 }
 
 // Store markers we add here, so we can remove them again on next search
@@ -148,7 +193,7 @@ function showFavorites() {
 
 // Show our locations on the map, with all relevant interactivity 
 function createMarker(place) {
-
+    
     var placeLoc = place.geometry.location;
             var placeId = place.place_id;
             var marker = new google.maps.Marker({
@@ -168,6 +213,24 @@ function createMarker(place) {
                 // add placeid to global scope, so we can access it in save function 
                 currentPlaceId = placeId;
                 
+                var isAFavorite = false;
+                
+                // Check if that placeId is in the localStorage["favorites"] array
+                var favs = JSON.parse(localStorage['favorites']);
+                for (var i = 0; i < favs.length; i++) {
+                    if ( favs[i] == currentPlaceId ) {
+                        console.log('this is a favorited place');
+                        // Change button out for 'remove' button -- it's already favorited
+                        isAFavorite = true;
+                    }
+                }
+                
+                if ( isAFavorite == true) {
+                    showRemoveButton();
+                } else {
+                    showSaveButton();
+                }
+                
                 service.getDetails(request, callback);
                 
                 function callback(loc, stat) {
@@ -185,6 +248,9 @@ function createMarker(place) {
                         var img = document.getElementById('loc-image');
                         img.src = place.photos[0].getUrl({ 'maxWidth': 3500, 'maxHeight': 3500 });
                         console.log(place.photos[0].getUrl({ 'maxWidth': 3500, 'maxHeight': 3500 }));
+                    } else {
+                        var img = document.getElementById('loc-image');
+                        img.src = '';
                     }
 
                     var title = document.getElementById('title');
@@ -211,8 +277,17 @@ function createMarker(place) {
         
         }
 
-function clearMarkers() {
+
+
+function showRemoveButton() {
+    var btn = document.getElementById('savebutton');
+    btn.style.background = '#FF3B30';
+    btn.innerHTML = 'Remove From Favorites';
     
 }
 
-
+function showSaveButton() {
+    var btn = document.getElementById('savebutton');
+    btn.style.background = '#007AFF';
+    btn.innerHTML = 'Save to Favorites';
+}

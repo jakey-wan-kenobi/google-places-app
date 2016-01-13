@@ -79,6 +79,22 @@
     overflow: hidden;
 }
 
+.no-image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0%;
+    overflow: hidden;
+    background: lightgray;
+}
+
+.no-image p {
+        position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
 .loc-details {
     position: relative;
     padding: 10px;
@@ -95,11 +111,16 @@
     border: 0;
     /* outline: 0; */
     /* box-sizing: content-box; */
-    background: rgb(0,180,255);
+    background: #007AFF;
+    -webkit-appearance: none;
 }
 
 #favoritesbutton {
     margin-left: 50px;
     position: absolute;
     right: 30px;
+    outline: none;
+     -webkit-appearance: none;
 }
+
+button:focus {outline:0;}
