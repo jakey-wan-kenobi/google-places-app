@@ -22,4 +22,8 @@ Client side app (no server code)
 
 PERSONAL NOTES: 
 
+If you have time, include ability to grab user's location and use it to provide nearby results 
 
+
+
+Issue: Chrome blocks geolocation requests from file:// -- seting up a node server (http://stackoverflow.com/questions/5423938/html-5-geo-location-prompt-in-chrome)
