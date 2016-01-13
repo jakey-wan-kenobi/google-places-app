@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     
 });
 
+// Set up map immediately 
+
     
 function searchPlaces() {
     // Maps JS
@@ -34,7 +36,7 @@ function searchPlaces() {
         // Set up our map
         map = new google.maps.Map(document.getElementById('map'), {
             center: currentLocation, 
-            zoom: 10
+            zoom: 14
         })
         
         
@@ -48,6 +50,17 @@ function searchPlaces() {
         // Creating a PlacesService instance using our map
         service = new google.maps.places.PlacesService(map);
         infoWindow = new google.maps.InfoWindow();
+        
+//        function setCurrentLocationMarker(place) {
+//            var loc = place.geometry.location;
+//            var marker = new google.maps.Marker({
+//                map: map,
+//                position: place.geometry.location,
+//                icon: 'http://a2.mzstatic.com/us/r30/Purple3/v4/21/89/a8/2189a845-c072-d619-f364-af652459ec33/icon175x175.png' 
+//            })
+//        }; 
+//        
+//        setCurrentLocationMarker(currentLocation);
 
         // Submit request using search results
         service.textSearch(request, callback);
@@ -56,6 +69,7 @@ function searchPlaces() {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
               createMarker(results[i]);
+                console.log(results[i]);
             }
           }
         }
