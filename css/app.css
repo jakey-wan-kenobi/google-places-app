@@ -1,7 +1,7 @@
 #search-input-wrap {
     position: absolute;
     top: 25px;
-    left: 150px;
+    left: 0;
     width:100%;
     z-index: 9;
     font-size: 18px;
@@ -34,6 +34,7 @@
 
 #search-input-wrap input {
     width: 50%;
+    margin-left: 150px;
 }
 
 
@@ -54,8 +55,8 @@
     border-left: 2px solid gray;
     -webkit-transform: translate3d(99%, 0, 0);
     transform: translate3d(99%, 0, 0);
-    -webkit-transition: all 500ms;
-    transition: all 500ms;
+    -webkit-transition: all 250ms;
+    transition: all 250ms;
 }
 
 #img-wrap {
@@ -81,4 +82,24 @@
 .loc-details {
     position: relative;
     padding: 10px;
+}
+
+.footerbutton {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    height: 55px;
+    padding: 0;
+    margin: 0;
+    left: 0;
+    border: 0;
+    /* outline: 0; */
+    /* box-sizing: content-box; */
+    background: rgb(0,180,255);
+}
+
+#favoritesbutton {
+    margin-left: 50px;
+    position: absolute;
+    right: 30px;
 }

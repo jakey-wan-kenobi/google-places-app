@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var button = document.getElementById('searchbutton');
     //console.log(button);
     button.addEventListener('click', searchPlaces);
+    
+    var save = document.getElementById('savebutton');
+    save.addEventListener('click', savePlace);
 
     
 });
@@ -100,7 +103,12 @@ function searchPlaces() {
                 var request = {
                     placeId: placeId
                 }
+                
+                // add placeid to global scope, so we can access it in save function 
+                currentPlaceId = placeId;
+                
                 service.getDetails(request, callback);
+                
                 function callback(loc, stat) {
                     // loc contains all the relevant data about the clicked place
                     console.log(loc, status);
@@ -118,8 +126,6 @@ function searchPlaces() {
                         console.log(place.photos[0].getUrl({ 'maxWidth': 3500, 'maxHeight': 3500 }));
                     }
 
-                    console.log(place.formatted_phone_number, place.website);
-
                     var title = document.getElementById('title');
                     var website = document.getElementById('website');
                     var address = document.getElementById('address');
@@ -135,10 +141,6 @@ function searchPlaces() {
                     
                 };
 
-                
-                
-
-
                 // Set the infoWindow (above element) to show name of place
                 infoWindow.setContent(place.name);
                 infoWindow.open(map, this);
@@ -150,6 +152,23 @@ function searchPlaces() {
     
 }
 
+var favorites = [];
+
+// Save place to favorites 
+function savePlace() {
+    favorites.push(currentPlaceId);
+    console.log(favorites);
+    // Can't store arrays to localStorage, so stringify and then parse upon retrieval 
+    localStorage['favorites'] = JSON.stringify(favorites);
+    
+    console.log(localStorage);
+}
+
+
+// When changes are made to favorites array, push them to the DOM
+function updateFavorites() {
+    
+}
 
 
 
