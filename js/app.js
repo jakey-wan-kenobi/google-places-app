@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var save = document.getElementById('savebutton');
     save.addEventListener('click', savePlace);
 
+    var show = document.getElementById('favoritesbutton');
+    show.addEventListener('click', showFavorites);
     
 });
 
@@ -18,10 +20,11 @@ navigator.geolocation.getCurrentPosition(locationFound, error);
 
 var map;
 var service; 
+var markers = [];
+
 
 // Success retrieving location
 function locationFound(pos) {
-    
     
     
         var position = pos.coords;
@@ -40,7 +43,7 @@ function locationFound(pos) {
         
        
         
-        marker = new google.maps.Marker({
+        specialMarker = new google.maps.Marker({
                 map: map,
                 position: currentLocation,
                 icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
@@ -59,6 +62,13 @@ function error(err) {
 
     
 function searchPlaces() {
+    
+    // Clear current markers 
+    console.log(markers);
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
        
     var infoWindow;
     var userInput = document.getElementById('searchinput').value;
@@ -72,9 +82,7 @@ function searchPlaces() {
         }
         
         // Creating a PlacesService instance using our map
-        service = new google.maps.places.PlacesService(map);
-        infoWindow = new google.maps.InfoWindow();
-        
+        service = new google.maps.places.PlacesService(map);        
 
 
         // Submit request using search results
@@ -88,15 +96,68 @@ function searchPlaces() {
             }
           }
         }
+    
+}
+
+var favorites = JSON.parse(localStorage['favorites']);
+
+// Save place to favorites 
+function savePlace() {
+    favorites.push(currentPlaceId);
+    console.log(favorites);
+    // Can't store arrays to localStorage, so stringify and then parse upon retrieval 
+    localStorage['favorites'] = JSON.stringify(favorites);
+    
+    console.log(localStorage);
+}
+
+
+// When changes are made to favorites array, push them to the DOM
+function showFavorites() {
+    
+    // Clear current markers 
+    console.log(markers);
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+    
+    var favs = JSON.parse(localStorage['favorites']);
+    console.log(favs);
+    
+    service = new google.maps.places.PlacesService(map);
+    
+    // For each favorite in our array, use the placeId to put the marker back on the map
+    for ( var i = 0; i < favs.length; i++) {
         
-        function createMarker(place) {
-            var placeLoc = place.geometry.location;
+        var request = {
+            placeId: favs[i]
+        }
+        
+        service.getDetails(request, callback);
+        
+        function callback(place, status) {
+            createMarker(place);
+        } 
+        
+    }
+}
+
+// Store markers we add here, so we can remove them again on next search
+
+
+// Show our locations on the map, with all relevant interactivity 
+function createMarker(place) {
+
+    var placeLoc = place.geometry.location;
             var placeId = place.place_id;
             var marker = new google.maps.Marker({
                 map: map,
                 position: place.geometry.location
             });
-            
+                
+            markers.push(marker);
+    
             google.maps.event.addListener(marker, 'click', function() {
 
                 // Grab all the relevant details about the clicked place
@@ -141,35 +202,17 @@ function searchPlaces() {
                     
                 };
 
+                infoWindow = new google.maps.InfoWindow();
+                
                 // Set the infoWindow (above element) to show name of place
                 infoWindow.setContent(place.name);
                 infoWindow.open(map, this);
               });
         
         }
-        
 
+function clearMarkers() {
     
 }
-
-var favorites = [];
-
-// Save place to favorites 
-function savePlace() {
-    favorites.push(currentPlaceId);
-    console.log(favorites);
-    // Can't store arrays to localStorage, so stringify and then parse upon retrieval 
-    localStorage['favorites'] = JSON.stringify(favorites);
-    
-    console.log(localStorage);
-}
-
-
-// When changes are made to favorites array, push them to the DOM
-function updateFavorites() {
-    
-}
-
-
 
 
