@@ -10,21 +10,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 // Set up map immediately 
 
+// Get current location using browser's navigator.geolocation API
+navigator.geolocation.getCurrentPosition(locationFound, error);
+
+var map;
+var service; 
+
+// Success retrieving location
+function locationFound(pos) {
     
-function searchPlaces() {
-    // Maps JS
     
-    var map;
-    var service;    
-    var infoWindow;
-    var userInput = document.getElementById('searchinput').value;
-    //console.log(userInput);
     
-    // Get current location using browser's navigator.geolocation API
-    navigator.geolocation.getCurrentPosition(locationFound, error);
-    
-    // Successfully retrieved current location
-    function locationFound(pos) {
         var position = pos.coords;
         var latitude = position.latitude;
         var longitude = position.longitude;
@@ -39,7 +35,32 @@ function searchPlaces() {
             zoom: 14
         })
         
+       
         
+        marker = new google.maps.Marker({
+                map: map,
+                position: currentLocation,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                animation: google.maps.Animation.DROP
+        })
+        
+}
+
+// Error retrieving location
+function error(err) {
+    console.log('error', err.code);
+    if (err.code == 1 ) {
+        alert('Please enable location services in order to use this app! Also note that Chrome will block geolocation services automatically if serving this site from file://');
+    }
+}
+
+    
+function searchPlaces() {
+       
+    var infoWindow;
+    var userInput = document.getElementById('searchinput').value;
+    //console.log(userInput);
+  
         // Options for PlacesService request, includes loc obtained above from browser, plus radius
         var request = {
             location: currentLocation,
@@ -51,16 +72,7 @@ function searchPlaces() {
         service = new google.maps.places.PlacesService(map);
         infoWindow = new google.maps.InfoWindow();
         
-//        function setCurrentLocationMarker(place) {
-//            var loc = place.geometry.location;
-//            var marker = new google.maps.Marker({
-//                map: map,
-//                position: place.geometry.location,
-//                icon: 'http://a2.mzstatic.com/us/r30/Purple3/v4/21/89/a8/2189a845-c072-d619-f364-af652459ec33/icon175x175.png' 
-//            })
-//        }; 
-//        
-//        setCurrentLocationMarker(currentLocation);
+
 
         // Submit request using search results
         service.textSearch(request, callback);
@@ -76,32 +88,64 @@ function searchPlaces() {
         
         function createMarker(place) {
             var placeLoc = place.geometry.location;
+            var placeId = place.place_id;
             var marker = new google.maps.Marker({
                 map: map,
                 position: place.geometry.location
             });
             
-        google.maps.event.addListener(marker, 'click', function() {
-            infoWindow.setContent(place.name);
-            infoWindow.open(map, this);
-          });
+            google.maps.event.addListener(marker, 'click', function() {
+
+                // Grab all the relevant details about the clicked place
+                var request = {
+                    placeId: placeId
+                }
+                service.getDetails(request, callback);
+                function callback(loc, stat) {
+                    // loc contains all the relevant data about the clicked place
+                    console.log(loc, status);
+                    
+                    // Pull out left side modal and populate with info 
+                
+                    var pane = document.getElementById('info-pane');
+                    pane.style.webkitTransform = 'translate3d(0, 0, 0)';
+                    pane.style.transform = 'translate3d(0, 0, 0)';
+
+
+                    if (place.photos) {
+                        var img = document.getElementById('loc-image');
+                        img.src = place.photos[0].getUrl({ 'maxWidth': 3500, 'maxHeight': 3500 });
+                        console.log(place.photos[0].getUrl({ 'maxWidth': 3500, 'maxHeight': 3500 }));
+                    }
+
+                    console.log(place.formatted_phone_number, place.website);
+
+                    var title = document.getElementById('title');
+                    var website = document.getElementById('website');
+                    var address = document.getElementById('address');
+                    var phone = document.getElementById('phone');
+                    var description = document.getElementById('description'); 
+
+                    title.innerHTML = loc.name;
+                    website.href = loc.website;
+                    website.innerHTML = loc.website;
+                    address.innerHTML = loc.formatted_address;
+                    phone.innerHTML = loc.formatted_phone_number;
+                    
+                    
+                };
+
+                
+                
+
+
+                // Set the infoWindow (above element) to show name of place
+                infoWindow.setContent(place.name);
+                infoWindow.open(map, this);
+              });
         
         }
         
-
-
-        
-    }
-
-    // Error retrieving location
-    function error(err) {
-        console.log('error', err.code);
-        if (err.code == 1 ) {
-            alert('Please enable location services in order to use this app! Also note that Chrome will block geolocation services automatically if serving this site from file://');
-        }
-    }
-    
-    
 
     
 }
