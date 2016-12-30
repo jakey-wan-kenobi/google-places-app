@@ -2,38 +2,38 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
+
         <!-- meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+
         <title>Code Challenge</title>
-        
+
         <!-- resources -->
         <link href="css/app.css" rel="stylesheet">
         <script src="js/app.js"></script>
-        
-        
+
+
         <!-- external scripts-->
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwqDn3lTaRIZmx9x8fCur9r2MUScEvXJw&libraries=places"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=[YOUR KEY HERE]=places"></script>
 
     </head>
-    
+
     <body>
-        
+
         <!-- search input field -->
         <section id="search-input-wrap">
             <input placeholder="Find a place..." id="searchinput">
             <button id="searchbutton">Search</button>
             <button id="favoritesbutton">Show Favorites</button>
-        
+
         </section>
-        
+
         <!-- map -->
         <section id="search-results-wrap">
             <div id="map"></div>
         </section>
-        
+
         <!-- pull out content window -->
         <section id="info-pane">
             <figure id="img-wrap">
@@ -42,7 +42,7 @@
                 </div>
                 <img id="loc-image">
             </figure>
-            
+
             <article class="loc-details">
                 <h2 id="title"></h2>
                 <h4 id="address"></h4>
@@ -50,13 +50,13 @@
                 <a id="website"></a>
 
             </article>
-            
+
             <button id="savebutton" class="footerbutton">
                 Save to Favorites
             </button>
-        
+
         </section>
 
-    
+
     </body>
 </html>
