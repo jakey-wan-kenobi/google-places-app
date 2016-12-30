@@ -1,6 +1,6 @@
 # Google Maps & Places API Experiment 🗺 📍
 
-🚧🚧 **WARNING:** This is old. I was a young padawan. Don't use this. 🚧🚧
+```🚧🚧 **WARNING:** This is old. I was a young padawan. Don't use this. 🚧🚧```
 
 A fun little experiment with the [Google Places & Google Maps libraries](https://developers.google.com/maps/documentation/javascript/places).
 
